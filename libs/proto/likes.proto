@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package interactions;
+option go_package = "interactionspb";
+
+
+
+// Like على Pin
+message Like {
+    string userId = 1;
+    string pinId = 2;
+    string createdAt = 3;
+}
+
+message AddLikeRequest {
+    string userId = 1;
+    string pinId = 2;
+}
+
+
+
+message RemoveLikeRequest {
+    string userId = 1;
+    string pinId = 2;
+}
+
+message RemoveLikeResponse {
+    bool success = 1;
+}
+
+
+service Likes {
+    rpc AddLike(AddLikeRequest) returns (Like);    
+    rpc RemoveLike(RemoveLikeRequest) returns (RemoveLikeResponse);
+}

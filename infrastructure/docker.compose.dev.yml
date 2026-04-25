@@ -1,0 +1,194 @@
+version: '3.8'
+
+services:
+  # PostgreSQL for User Service
+  user-db:
+    image: mongo:7
+    container_name: user-db
+    restart: always
+    ports:
+      - "27020:27017"
+    # env_file: "./env/user-db.env"
+    volumes:
+      - user-storage:/data/db
+    networks:
+      - pinterest_network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+
+  # MongoDB for Pins Service
+  pins-db:
+    image: mongo:7
+    container_name: pins-db
+    restart: always
+    ports:
+      - "27019:27017"
+    # env_file: "./env/pins-db.env"
+    volumes:
+      - pins-storage:/data/db
+    networks:
+      - pinterest_network
+    
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+
+  boards-db:
+    image: mongo:7
+    container_name: boards-db
+    restart: always
+    ports:
+      - "27021:27017"
+    # env_file: "./env/pins-db.env"
+    volumes:
+      - boards-storage:/data/db
+    networks:
+      - pinterest_network
+
+  saves-db:
+    image: mongo:7
+    container_name: saves-db
+    restart: always
+    ports:
+      - "27022:27017"
+    # env_file: "./env/pins-db.env"
+    volumes:
+      - saves-storage:/data/db
+    networks:
+      - pinterest_network
+    
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+  likes-db:
+    image: mongo:7
+    container_name: likes-db
+    restart: always
+    ports:
+      - "27023:27017"
+    # env_file: "./env/pins-db.env"
+    volumes:
+      - likes-storage:/data/db
+    networks:
+      - pinterest_network
+    
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+  comments-db:
+    image: mongo:7
+    container_name: comments-db
+    restart: always
+    ports:
+      - "27024:27017"
+    # env_file: "./env/pins-db.env"
+    volumes:
+      - comments-storage:/data/db
+    networks:
+      - pinterest_network
+    
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+
+  # Redis for Authentication
+  auth-cache:
+    image: redis:8
+    container_name: auth-cache
+    command: ["redis-server", "--requirepass", "secret"]
+    ports:
+      - "6380:6379"
+    networks:
+      - pinterest_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "secret", "ping"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+
+  # Redis for general caching
+  cache-db:
+    image: redis:8
+    container_name: cache-db
+    command: ["redis-server", "--requirepass", "secret"]
+    ports:
+      - "6381:6379"
+    networks:
+      - pinterest_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "secret", "ping"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+      start_period: 5s
+  rabbitmq:
+     image: rabbitmq:3-management 
+     container_name: rabbitmq
+     restart: always
+     ports:
+       - "5672:5672" 
+       - "15672:15672"
+     volumes:
+       - rabbitmq_data:/var/lib/rabbitmq 
+     networks:
+       - pinterest_network
+
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: vault
+    restart: always
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/file
+    environment:
+      VAULT_LOCAL_CONFIG: |
+        {
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "listener": [{
+            "tcp": {
+              "address": "0.0.0.0:8200",
+              "tls_disable": true
+            }
+          }],
+          "ui": true
+        }
+    command: server
+    networks:
+      - pinterest_network
+               
+volumes:
+  user-storage:
+  pins-storage:
+  boards-storage:
+  saves-storage:
+  likes-storage:
+  comments-storage:
+  rabbitmq_data:
+  vault_data:
+networks:
+  pinterest_network:
+    driver: bridge

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package AUTH;
+
+
+option go_package = "authpb";
+
+enum AuthProvider {
+  LOCAL  = 0;
+  GOOGLE = 1;
+}
+
+message RegisterRequest {
+  string          email      = 1;
+  optional string password   = 2;
+  AuthProvider    provider   = 4;
+  optional string birthDate  = 5;
+  optional string providerId = 6;
+  optional string idToken    = 7;
+}
+
+message LoginRequest {
+  string       email    = 1;
+  string       password = 2;
+  // AuthProvider provider = 3;
+  // string       id_token = 4;
+}
+
+message LogoutRequest {
+  string user_id       = 1;
+  string refreshToken = 2;
+}
+
+message RefreshTokenRequest {
+  string refreshToken = 1;
+}
+
+message VerifyEmailRequest {
+  string token = 1;
+}
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+message ResetPasswordRequest {
+  string token        = 1;
+  string newPassword = 2;
+}
+
+// =======================
+// RESPONSES
+// =======================
+
+message AuthResponse {
+  string userId       = 1;
+  string accessToken  = 2;
+  string refreshToken = 3;
+}
+
+message Empty {}
+
+message MessageResponse {
+  string message = 1;
+}
+
+// =======================
+// SERVICE
+// =======================
+
+service Auth {
+
+  rpc Register(RegisterRequest) returns (AuthResponse);
+
+  rpc LogIn(LoginRequest) returns (AuthResponse);
+
+  rpc LogOut(LogoutRequest) returns (Empty);
+
+  rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
+
+  rpc VerifyEmail(VerifyEmailRequest) returns (MessageResponse);
+
+  rpc ForgotPassword(ForgotPasswordRequest) returns (MessageResponse);
+
+  rpc ResetPassword(ResetPasswordRequest) returns (MessageResponse);
+}

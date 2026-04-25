@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package feed;
+option go_package = "feedpb";
+
+import "google/protobuf/timestamp.proto";
+
+// message
+message FeedItem {
+    string id = 1;                    
+    string type = 2;                   
+    string userId = 3;                
+    string targetId = 4;               
+    string title = 5;                   
+    string description = 6;         
+    string url = 7;               
+    repeated string tags = 8;         
+    repeated string interests = 9;    
+    google.protobuf.Timestamp createdAt = 10;
+}
+
+message GetFeedRequest {
+    string userId = 1;
+    int32 cursor = 2;
+    int32 limit = 3;
+}
+
+message GetFeedResponse {
+    repeated FeedItem items = 1;
+    int32 nextCursor = 2;
+}
+
+// Feed Service
+service FeedService {
+    rpc GetFeed(GetFeedRequest) returns (GetFeedResponse);
+}

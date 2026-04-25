@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package USERS;
+
+// import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "userspb";
+
+// Messages
+message User {
+  string id        = 1;
+  string email     = 2;
+  string userName  = 3;
+  string firstName = 4;
+  string lastName  = 5;
+  string password  = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message CreateUserRequest {
+  string          email     = 1;
+  optional string password  = 2;
+  optional string birthDate = 3;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message GetUserByEmailRequest{
+  string email = 1;
+}
+
+message ListUsersRequest {
+  int32 cursor = 1;
+  int32 limit  = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+}
+
+// user Services
+service Users {
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+
+}
+
+// Profile Messages
+message Profile {
+  string id              = 1;
+  string about           = 2;
+  string gender          = 3;
+  string location        = 4;
+  string website         = 5;
+  string createdAt       = 6;
+  string updatedAt       = 7;
+  int32  followerCount   = 8;
+  int32  followingsCount = 9;
+  bool   isVerified      = 10;
+  Avatar avatar          = 11;
+  User   user            = 12;
+}
+
+message CreateProfileResponse {
+  Profile profile = 1;
+}
+
+message GetProfileRequest {
+  string userId = 1;
+}
+
+message UpdateProfileRequest {
+  string userId   = 1;
+  string bio      = 2;
+  string location = 3;
+  string website  = 4;
+}
+
+message UpdateProfileResponse {
+  Profile profile = 1;
+}
+
+// Profile Services
+service Profiles {
+  rpc GetProfile(GetProfileRequest) returns (Profile);
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+}
+
+// Avatar Messages
+message Avatar {
+  string publicId = 2;
+  string url      = 3;
+
+}
+
+message UploadAvatarRequest {
+  string userId   = 1;
+  string publicId = 2 ;
+  string url      = 3;
+}
+
+message GetAvatarRequest {
+  string userId = 1;
+}
+
+message GetAvatarResponse {
+  Avatar avatar = 1;
+}
+
+// Avatar Services
+service Avatars {
+  rpc UploadAvatar(UploadAvatarRequest) returns (Avatar);
+  rpc GetAvatar(GetAvatarRequest) returns (GetAvatarResponse);
+}

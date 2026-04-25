@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package PINS;
+option go_package = "pinspb";
+
+
+
+enum PinType {
+  IMAGE = 0;
+  VIDEO = 1;
+
+}
+
+message Pin {
+  string  id            = 1;
+  string  userId        = 2;
+  string  title         = 3;
+  string  description   = 4;
+  string  link          = 5;
+  int32   width         = 6;
+  int32   height        = 7;
+  PinType type          = 8;
+  string  url           = 9;
+  string  publicId      = 10;
+  bool    allowComments = 11;
+  string  createdAt     = 12;
+  string  status        = 13;
+  int32  likesCount        = 14;
+  int32  CommentsCount        = 15;
+}
+
+message CreatePinRequest {
+  string  userId        = 1;
+  string  title         = 2;
+  string  description   = 3;
+  string  link          = 4;
+  int32   width         = 5;
+  int32   height        = 6;
+  PinType type          = 7;
+  string  url           = 8;
+  string  publicId      = 9;
+  bool    allowComments = 10;
+
+}
+
+message GetPinRequest {
+  string id = 1;
+}
+
+message DeletePinRequest {
+  string id = 1;
+}
+
+message SuccessMessageResponse{
+  bool success = 1;
+}
+
+message ListPinsRequest {
+  string userId=1;
+  string cursor = 2;
+  int32  limit  = 3;
+}
+
+message ListPinsResponse {
+  repeated Pin pins     = 1;
+  PageInfo     pageInfo = 2;
+  message PageInfo {
+    string nextCursor = 1;
+    bool   hasNext    = 2;
+  }
+}
+
+// Service
+service Pins {
+  rpc CreatePin(CreatePinRequest) returns (Pin);
+  rpc PublishPin(CreatePinRequest) returns (SuccessMessageResponse);
+  rpc DeletePin(DeletePinRequest) returns (SuccessMessageResponse);
+  rpc GetPin(GetPinRequest) returns (Pin);
+  rpc ListPins(ListPinsRequest) returns (ListPinsResponse);
+}

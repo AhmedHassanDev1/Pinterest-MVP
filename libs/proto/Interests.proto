@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package interactions;
+option go_package = "interactionspb";
+
+import "google/protobuf/timestamp.proto";
+
+message Interest {
+    string id = 1;
+    string name = 2;
+}
+
+message UserInterest {
+    string userId = 1;
+    string interestId = 2;
+    google.protobuf.Timestamp createdAt = 3;
+}
+
+message PinInterest {
+    string pinId = 1;
+    string interestId = 2;
+    google.protobuf.Timestamp createdAt = 3;
+}
+
+message AddUserInterestRequest {
+    string userId = 1;
+    string interestId = 2;
+}
+
+message AddUserInterestResponse {
+    UserInterest userInterest = 1;
+}
+
+message AddPinInterestRequest {
+    string pinId = 1;
+    string interestId = 2;
+}
+
+message AddPinInterestResponse {
+    PinInterest pinInterest = 1;
+}
+
+service InterestsService {
+    rpc AddUserInterest(AddUserInterestRequest) returns (AddUserInterestResponse);
+    rpc AddPinInterest(AddPinInterestRequest) returns (AddPinInterestResponse);
+}

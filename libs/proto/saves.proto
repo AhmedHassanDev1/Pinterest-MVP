@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package SAVES;
+
+message Save {
+  string id        = 1;
+  string userId    = 2;
+  string pinId     = 3;
+  string createdAt = 4;
+}
+
+message AddSaveRequest {
+  string          userId  = 1;
+  string          pinId   = 2;
+  optional string boardId = 3;
+}
+
+message RemoveSaveRequest {
+  string userId = 1;
+  string pinId  = 2;
+  optional string boardId = 3;
+
+}
+
+// رد إزالة save
+message RemoveSaveResponse {
+  bool success = 1;
+}
+
+// طلب جلب كل الـ saves لمستخدم
+message GetSavesByBoardRequest {
+  string userId = 1;
+}
+
+message GetUnorganizedSavesRequest {
+  string userId = 1;
+}
+
+message GetSavesResponse {
+  repeated Save saves = 1;
+}
+
+// طلب التحقق من save
+message CheckSaveRequest {
+  string userId = 1;
+  string pinId  = 2;
+}
+
+message CheckSaveResponse {
+  bool saved = 1;
+}
+
+service Saves {
+  rpc AddSave(AddSaveRequest) returns (Save);
+  rpc RemoveSave(RemoveSaveRequest) returns (RemoveSaveResponse);
+  rpc GetSavesByBoard(GetSavesByBoardRequest) returns (GetSavesResponse);
+  rpc GetUnorganizedSaves(GetUnorganizedSavesRequest) returns (GetSavesResponse);
+  rpc CheckSave(CheckSaveRequest) returns (CheckSaveResponse);
+
+}
