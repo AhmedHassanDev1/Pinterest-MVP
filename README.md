@@ -50,6 +50,7 @@ Each service is isolated and communicates via:
 * MongoDB   (depending on service)
 * Mongoose ORM
 * hashicorp vault (managment secrets)
+* Jest (Testing)
 
 ### Infrastructure
 
