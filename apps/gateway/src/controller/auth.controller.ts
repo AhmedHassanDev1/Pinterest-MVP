@@ -7,13 +7,18 @@ import { RpcException } from "@nestjs/microservices";
 import { cookiesOptions } from "../constants/cookies.config";
 import { publicDecrypt } from "crypto";
 import { PublicRoute } from "../decorators/publicRoute.decorator";
+import { ApiTags, ApiOperation, ApiResponse, ApiCookieAuth } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller("/auth")
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
     ) { }
 
+    @ApiOperation({ summary: 'Register a new user' })
+    @ApiResponse({ status: 201, description: 'User successfully registered.' })
+    @ApiResponse({ status: 400, description: 'Bad Request.' })
     @PublicRoute()
     @Post("/register")
     async register(@Body() body: RegisterDTO, @Res({ passthrough: true }) res: Response) {
@@ -26,6 +31,9 @@ export class AuthController {
         }
     }
 
+    @ApiOperation({ summary: 'Log in as a user' })
+    @ApiResponse({ status: 201, description: 'User successfully logged in.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @PublicRoute()
     @Post("/login")
     async logIn(
@@ -39,12 +47,19 @@ export class AuthController {
             throw new RpcException(error)
         }
     }
+
+    @ApiOperation({ summary: 'Log out a user' })
+    @ApiResponse({ status: 200, description: 'User successfully logged out.' })
     @PublicRoute()
     @Delete("/logout")
     async logout(@Res({ passthrough: true }) res: Response) {
         res.clearCookie("refresh-token")
     }
 
+    @ApiOperation({ summary: 'Refresh authentication token' })
+    @ApiResponse({ status: 200, description: 'Token refreshed successfully.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiCookieAuth()
     @PublicRoute()
     @Post("/refresh-token")
     async refreshToken(@Req() req: Request) {

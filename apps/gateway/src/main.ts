@@ -5,6 +5,7 @@ import { ValidationExceptionFilter } from './exception-filters/pipe-exception.fi
 import { GrpcExceptionFilter } from './exception-filters/grpc-exception.filter';
 import cookieParser from 'cookie-parser';
 import { corsOptions } from './constants/cors.config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(GatewayModule);
@@ -17,8 +18,17 @@ async function bootstrap() {
   }))
   app.useGlobalFilters(new ValidationExceptionFilter(), new GrpcExceptionFilter())
  
+  const config = new DocumentBuilder()
+    .setTitle('Gateway API')
+    .setDescription('The API documentation for the Gateway service')
+    .setVersion('1.0')
+    .addCookieAuth('refresh-token')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
   await app.listen(8001);
 }  
 bootstrap();   
-
 
