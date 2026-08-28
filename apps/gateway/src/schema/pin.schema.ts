@@ -105,3 +105,33 @@ export class PublishPinInput {
     height: Number
 
 }
+
+@ObjectType()
+export class PageInfo {
+    @Field({ nullable: true })
+    nextCursor?: string;
+
+    @Field()
+    hasNext: boolean;
+}
+
+@ObjectType()
+export class ListPinsResponse {
+    @Field(() => [Pin])
+    pins: Pin[];
+
+    @Field(() => PageInfo)
+    pageInfo: PageInfo;
+}
+
+@InputType()
+export class ListPinsInput {
+    @Field({ nullable: true })
+    userId?: string;
+
+    @Field({ nullable: true })
+    cursor?: string;
+
+    @Field(() => Int, { nullable: true })
+    limit?: number;
+}

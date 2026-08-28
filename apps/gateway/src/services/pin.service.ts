@@ -28,4 +28,12 @@ export class PinService implements OnModuleInit {
     async publishPin(pinId: string) {
         return await lastValueFrom(this.pinRPC.getPin({ id: pinId }))
     }
+
+    async listPins(data) {
+        return await lastValueFrom(this.pinRPC.listPins(data))
+    }
+
+    async deletePin(pinId: string) {
+        return await lastValueFrom(this.pinRPC.deletePin({ id: pinId }))
+    }
 }  

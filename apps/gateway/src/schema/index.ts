@@ -6,3 +6,7 @@ export class SuccessMessage{
     @Field()
     success:Boolean
 }
+
+export * from './board.schema';
+export * from './save.schema';
+export * from './like.schema';

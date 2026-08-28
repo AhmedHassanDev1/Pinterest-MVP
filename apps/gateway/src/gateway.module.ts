@@ -20,7 +20,11 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { BoardResolver } from './resolvers/board.resolver';
 import { PinResolver } from './resolvers/pin.resolver';
 import { PinService } from './services/pin.service';
-
+import { BoardService } from './services/board.service';
+import { SaveService } from './services/save.service';
+import { LikeService } from './services/like.service';
+import { SaveResolver } from './resolvers/save.resolver';
+import { LikeResolver } from './resolvers/like.resolver';
 
 
 @Module({
@@ -69,7 +73,24 @@ import { PinService } from './services/pin.service';
         url: process.env.BOARD_URL,
         protoPath: protoFiles.board,
       }
-
+    },
+    {
+      name: GRPC_SERVICES.SAVES,
+      transport: Transport.GRPC,
+      options: {
+        package: GRPC_PACKAGES.SAVES,
+        url: process.env.SAVE_URL,
+        protoPath: protoFiles.saves,
+      }
+    },
+    {
+      name: GRPC_SERVICES.LIKES,
+      transport: Transport.GRPC,
+      options: {
+        package: GRPC_PACKAGES.LIKES,
+        url: process.env.LIKE_URL,
+        protoPath: protoFiles.likes,
+      }
     }])
   ],
   controllers: [AuthController, UserController],
@@ -88,10 +109,15 @@ import { PinService } from './services/pin.service';
     AuthService,
     UserService,
     PinService,
+    BoardService,
+    SaveService,
+    LikeService,
     UserResolver,
     ProfileResolver,
     PinResolver,
     BoardResolver,
+    SaveResolver,
+    LikeResolver,
   ]
 })
 export class GatewayModule { }

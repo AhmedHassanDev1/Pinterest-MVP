@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
-import { CreatePinInput, Pin, PublishPinInput } from "../schema/pin.schema";
+import { CreatePinInput, Pin, PublishPinInput, ListPinsResponse, ListPinsInput } from "../schema/pin.schema";
 import { PinService } from "../services/pin.service";
 import { SuccessMessage } from "../schema";
 
@@ -21,5 +21,13 @@ export class PinResolver {
         return await this.pinService.createPin(pin)
     }
 
-   
-} 
+    @Query(() => ListPinsResponse)
+    async listPins(@Args("listPinsInput", { type: () => ListPinsInput, nullable: true }) input) {
+        return await this.pinService.listPins(input || {});
+    }
+
+    @Mutation(() => SuccessMessage)
+    async deletePin(@Args("id") id: string) {
+        return await this.pinService.deletePin(id);
+    }
+}
